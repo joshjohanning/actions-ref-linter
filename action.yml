@@ -1,0 +1,50 @@
+name: 'Action Ref Linter'
+description: 'Enforce that each action reference in a workflow is referring to a semver or sha and not a branch'
+
+branding:
+  icon: "check-circle"
+  color: "purple"
+
+inputs:
+  workflow-path:
+    description: "The path to lint"
+    required: true
+    default: .github
+    
+runs:
+  using: "composite"
+  steps:
+    - name: pr-workitems-validator
+      shell: bash
+      run: |
+        # run actions-ref-linter
+        
+        count=0
+        files=$(find $FILE_PATH -name "*.yml" -o -name "*.yaml")
+        for file in $files; do
+            echo $"> Checking workflow file: $file"
+
+            while IFS= read -r line
+            do
+                if [[ $line == *"uses:"* ]]; then
+                    echo "  >> Policy violation: \"$line\""
+                    count=$((count+1))
+                fi
+            done <<< $(cat $file | grep -o -P 'uses: ([A-z0-9-]{1,39})/([A-Za-z0-9_.-]{1,100})@(?!(?:[A-Fa-f0-9]{40}|v[0-9.](?:\.[0-9]){0,2}))[\w"-]+')
+
+            # cat $file | grep -o -P 'uses: ([A-z0-9-]{1,39})/([A-Za-z0-9_.-]{1,100})@(?!(?:[A-Fa-f0-9]{40}|v[0-9.](?:\.[0-9]){0,2}))[\w"-]+' | while read -r line ; do
+            #     echo "  >> Policy violation: \"$line\""
+            #     i=$((i+1))
+            # done
+        done
+
+        echo ""
+        # if count > 0; then
+        if [[ $count > 0 ]]; then
+            echo "Summary: Found $count policy violations"
+            echo "::error::Found $count policy violations"
+            exit 1
+        else
+            echo "Summary: No policy violations found"
+            exit 0
+        fi
