@@ -30,7 +30,7 @@ runs:
                     echo "  >> Policy violation: \"$line\""
                     count=$((count+1))
                 fi
-            done <<< $(cat $file | grep -o -P 'uses: ([A-z0-9-]{1,39})/([A-Za-z0-9_.-]{1,100})@(?!(?:[A-Fa-f0-9]{40}|v[0-9.](?:\.[0-9]){0,2}))[\w"-]+')
+            done <<< $(cat $file | grep -o -P 'uses: ([A-z0-9-]{1,39})/([A-Za-z0-9_.\-\/]{1,200})@(?!(?:[A-Fa-f0-9]{40}|v[0-9.](?:\.[0-9]){0,2}))[\w"-]+')
 
             # cat $file | grep -o -P 'uses: ([A-z0-9-]{1,39})/([A-Za-z0-9_.-]{1,100})@(?!(?:[A-Fa-f0-9]{40}|v[0-9.](?:\.[0-9]){0,2}))[\w"-]+' | while read -r line ; do
             #     echo "  >> Policy violation: \"$line\""
