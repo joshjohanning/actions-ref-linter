@@ -1,5 +1,5 @@
 name: 'Action Ref Linter'
-description: 'Enforce that each action reference in a workflow is referring to a semver or sha and not a branch'
+description: 'Check that each action/reusable workflow reference is referring to a semver or SHA and not a branch'
 
 branding:
   icon: "check-circle"
